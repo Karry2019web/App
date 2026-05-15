@@ -99,6 +99,7 @@ async function getLastClosedDeployChecklist(): Promise<DeployChecklistData> {
         state: 'closed',
         sort: 'created',
         direction: 'desc',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         per_page: 10,
     });
 
