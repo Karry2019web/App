@@ -11693,6 +11693,11 @@ function getDeployChecklistDeployBlockers(issue) {
 function getDeployChecklistInternalQA(issue) {
     return parseChecklistSection(issue.body, /Internal QA:\*\*\r?\n((?:- \[[ x]].*\r?\n)+)/, new RegExp(`- \\[([ x])]\\s(${CONST_1.default.PULL_REQUEST_REGEX.source})`, 'g'), (url) => url.split('-').at(0)?.trim() ?? '');
 }
+/**
+ * Returns the most recently closed StagingDeployCash deploy checklist, or null if none exist yet.
+ * Throws on unexpected API or parsing errors so callers can distinguish "no checklist" (safe to
+ * deploy) from "lookup failed" (should block the deploy to avoid bypassing the safety gate).
+ */
 async function getLastClosedDeployChecklist() {
     const { data } = await GithubUtils_1.default.octokit.issues.listForRepo({
         owner: CONST_1.default.GITHUB_OWNER,
@@ -11705,7 +11710,7 @@ async function getLastClosedDeployChecklist() {
         per_page: 10,
     });
     if (!data.length) {
-        throw new Error(`Unable to find any closed ${CONST_1.default.LABELS.STAGING_DEPLOY} issues.`);
+        return null;
     }
     // Sort by closed_at descending to find the most recently closed checklist.
     // We cannot rely on the API's sort=updated because a comment or edit on an older
@@ -11713,7 +11718,7 @@ async function getLastClosedDeployChecklist() {
     const sorted = [...data].sort((a, b) => (b.closed_at ?? '').localeCompare(a.closed_at ?? ''));
     const issue = sorted.at(0);
     if (!issue) {
-        throw new Error(`Unable to find any closed ${CONST_1.default.LABELS.STAGING_DEPLOY} issues.`);
+        return null;
     }
     return getDeployChecklistData(issue);
 }
