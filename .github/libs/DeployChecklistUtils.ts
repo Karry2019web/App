@@ -91,6 +91,34 @@ function getDeployChecklistInternalQA(issue: OctokitIssueItem): ChecklistItem[] 
     );
 }
 
+async function getLastClosedDeployChecklist(): Promise<DeployChecklistData> {
+    const {data} = await GithubUtils.octokit.issues.listForRepo({
+        owner: CONST.GITHUB_OWNER,
+        repo: CONST.APP_REPO,
+        labels: CONST.LABELS.STAGING_DEPLOY,
+        state: 'closed',
+        sort: 'created',
+        direction: 'desc',
+        per_page: 10,
+    });
+
+    if (!data.length) {
+        throw new Error(`Unable to find any closed ${CONST.LABELS.STAGING_DEPLOY} issues.`);
+    }
+
+    // Sort by closed_at descending to find the most recently closed checklist.
+    // We cannot rely on the API's sort=updated because a comment or edit on an older
+    // closed issue would cause it to appear first, returning a stale version.
+    const sorted = [...data].sort((a, b) => (b.closed_at ?? '').localeCompare(a.closed_at ?? ''));
+
+    const issue = sorted.at(0);
+    if (!issue) {
+        throw new Error(`Unable to find any closed ${CONST.LABELS.STAGING_DEPLOY} issues.`);
+    }
+
+    return getDeployChecklistData(issue);
+}
+
 async function getDeployChecklist(): Promise<DeployChecklistData> {
     const {data} = await GithubUtils.octokit.issues.listForRepo({
         owner: CONST.GITHUB_OWNER,
@@ -263,5 +291,5 @@ async function generateDeployChecklistBodyAndAssignees({
     return {issueBody, issueAssignees};
 }
 
-export {getDeployChecklist, getDeployChecklistData, generateDeployChecklistBodyAndAssignees, parseChecklistSection};
+export {getDeployChecklist, getLastClosedDeployChecklist, getDeployChecklistData, generateDeployChecklistBodyAndAssignees, parseChecklistSection};
 export type {ChecklistItem, DeployChecklistBody, DeployChecklistParams, DeployChecklistData};
