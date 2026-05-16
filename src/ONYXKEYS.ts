@@ -1139,6 +1139,7 @@ const ONYXKEYS = {
         TODOS: 'todos',
         RAM_ONLY_SORTED_REPORT_ACTIONS: 'sortedReportActions',
         OPEN_AND_SUBMITTED_REPORTS_BY_POLICY_ID: 'openAndSubmittedReportsByPolicyID',
+        SIDEBAR_ORDERED_REPORTS: 'sidebarOrderedReports',
     },
 
     /** Stores HybridApp specific state required to interoperate with OldDot */
@@ -1609,6 +1610,7 @@ type OnyxDerivedValuesMapping = {
     [ONYXKEYS.DERIVED.TODOS]: OnyxTypes.TodosDerivedValue;
     [ONYXKEYS.DERIVED.RAM_ONLY_SORTED_REPORT_ACTIONS]: OnyxTypes.SortedReportActionsDerivedValue;
     [ONYXKEYS.DERIVED.OPEN_AND_SUBMITTED_REPORTS_BY_POLICY_ID]: OnyxTypes.OpenAndSubmittedReportsByPolicyIDDerivedValue;
+    [ONYXKEYS.DERIVED.SIDEBAR_ORDERED_REPORTS]: OnyxTypes.SidebarOrderedReportsDerivedValue;
 };
 
 type OnyxValues = OnyxValuesMapping & OnyxCollectionValuesMapping & OnyxFormValuesMapping & OnyxFormDraftValuesMapping & OnyxDerivedValuesMapping;
