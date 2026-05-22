@@ -2033,7 +2033,7 @@ const translations = {
         },
         aiPromptSection: {
             title: 'AI prompt',
-            subtitle: 'These details are displayed on your public profile. Anyone can see them.',
+            subtitle: 'Write custom instructions',
             prompt: 'Prompt',
             editPrompt: 'Edit prompt',
             promptCannotBeEmpty: 'Prompt cannot be empty',
